@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
 	/*
 	Напишите информационную систему "Корпорация".
 Программа должна обеспечивать:
@@ -30,11 +30,12 @@ public class Main {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         List<Persona> listPersons = new LinkedList<>();
-
+        boolean stop = false;
         do {
             System.out.println("Добавить сотрудника-нажми--> 1\nРедактировать  сотрудника - нажми--> 2\nУдалить сотрудника - нажми--> 3\nПоиск сотрудника по фамилии - нажми--> 4\n" +
-                    "Вывод информации обо всех сотрудниках указанного возрастата либо фамилии - нажми--> 5");
+                    "Вывод информации обо всех сотрудниках указанного возрастата либо фамилии - нажми--> 5\nЗагрузить сохраненный список- нажми-->6\nЗакрыть программу-нажми -->0");
             String answer = reader.readLine();
+
             switch (Integer.parseInt(answer)) {
                 case 1:
                     newPerson(listPersons);
@@ -51,8 +52,19 @@ public class Main {
                 case 5:
                     all(listPersons);
                     break;
+                case 6:
+                    downloadList();
+                    break;
+                case 0:
+                    stop = true;
+                    try (FileOutputStream fOs = new FileOutputStream(new File("list.txt"));
+                         ObjectOutputStream objOs = new ObjectOutputStream(fOs);) {
+                        objOs.writeObject(listPersons);
+                        System.err.println("Файл сохранен в корне программы\"list.txt\"");
+                    }
+                    break;
             }
-        } while (true);
+        } while (!stop);
     }
 
     public static void newPerson(List<Persona> listPersons) throws IOException {
@@ -139,15 +151,25 @@ public class Main {
                  ObjectOutputStream objOs = new ObjectOutputStream(fOs);) {
                 for (Persona p : listPersons) {
                     if (p.getName().charAt(0) == answer.charAt(0))
-
                         objOs.writeObject(p);
                 }
-
             }
-
         }
-
     }
+
+    public static void downloadList() {
+        try (FileInputStream fIs = new FileInputStream("list.txt");
+             ObjectInputStream objIs = new ObjectInputStream(fIs);) {
+            List<Persona> listPersons = (List<Persona>) objIs.readObject();
+            System.err.println("Данные загружены");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
 
 
