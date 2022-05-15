@@ -1,6 +1,5 @@
 package practic;
 
-import javax.swing.plaf.synth.SynthDesktopIconUI;
 import java.io.*;
 import java.util.*;
 
@@ -26,8 +25,6 @@ public class Main {
 сотрудников корпорации из указанного пользователем
 файла.
 	 */
-
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         List<Persona> listPersons = new LinkedList<>();
         boolean stop = false;
@@ -168,8 +165,6 @@ public class Main {
             e.printStackTrace();
         }
     }
-
-
 }
 
 
