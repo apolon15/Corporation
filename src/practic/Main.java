@@ -65,38 +65,48 @@ public class Main {
     }
 
     public static void newPerson(List<Persona> listPersons) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String resume;
-        do {
-            System.out.println("Укажи имя сотрудника: ");
-            String name = reader.readLine();
-            System.out.println("Укажи возраст сотрудника: ");
-            int income = Integer.parseInt(reader.readLine());
-            listPersons.add(new Persona(name, income));
-            System.out.println("Продолжить- нажми 0 ; Для выхода-любую клавишу");
-            resume = reader.readLine();
-        } while (resume.equals("0"));
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String resume;
+            do {
+                System.out.println("Укажи имя сотрудника: ");
+                String name = reader.readLine();
+                System.out.println("Укажи возраст сотрудника: ");
+                int income = Integer.parseInt(reader.readLine());
+                listPersons.add(new Persona(name, income));
+                System.out.println("Продолжить- нажми 0 ; Для выхода-любую клавишу");
+                resume = reader.readLine();
+            }
+            while (resume.equals("0"));
+        } catch (NumberFormatException ex) {
+            System.err.println("Скорее всего указан возраст не в правильном формате. Рекомендованно целое чмсло от 0 до ...");
+        }
     }
 
     public static void edit(List<Persona> listPersons) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Введи имя ");
-        String name = reader.readLine();
-        for (Persona p : listPersons) {
-            if (p.getName().equals(name)) {
-                System.out.println("Укажи новое имя сотрудника: ");
-                String newName = reader.readLine();
-                System.out.println("Укажи  новый доход сотрудника: ");
-                int newIncome = Integer.parseInt(reader.readLine());
-                p.setAge(newIncome);
-                p.setName(newName);
-            } else {
-                System.out.println(" Такого сотрудника нет");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("Введи имя ");
+            String name = reader.readLine();
+            for (Persona p : listPersons) {
+                if (p.getName().equals(name)) {
+                    System.out.println("Укажи новое имя сотрудника: ");
+                    String newName = reader.readLine();
+                    System.out.println("Укажи  новый доход сотрудника: ");
+                    int newIncome = Integer.parseInt(reader.readLine());
+                    p.setAge(newIncome);
+                    p.setName(newName);
+                } else {
+                    System.out.println("Такого сотрудника нет");
+                }
             }
+        } catch (NumberFormatException ex) {
+            System.err.println("Скорее всего указан доход не в допустимом виде. Рекомендованно целое чмсло от 0 до ...");
         }
     }
 
     public static void del(List<Persona> listPersons) throws IOException {
+        boolean flag = true;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введи имя ");
         String name = reader.readLine();
@@ -104,21 +114,27 @@ public class Main {
             if (p.getName().equals(name)) {
                 if (listPersons.remove(p)) {
                     System.out.println("Сотрудник удален");
-                } else {
-                    System.out.println("Не корректные данные");
+                    flag = false;
+                }
+                if (flag == true) {
+                    System.out.println("Не корректные данные, Либо такого сотрудника не существует");
                 }
             }
         }
-
     }
 
     public static void searchLastName(List<Persona> listPersons) throws IOException {
+        boolean flag = true;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введи имя ");
         String name = reader.readLine();
         for (Persona p : listPersons) {
             if (p.getName().equals(name)) {
                 System.out.println(p);
+                flag = false;
+            }
+            if (flag == false) {
+                System.out.println("Не корректные данные, Либо такого сотрудника не существует");
             }
         }
     }
@@ -143,14 +159,20 @@ public class Main {
         }
         System.out.println("Сохранить найдену информация в файл? 0-> да /прпустить-->любая клавиша");
         String userAnswer = reader.readLine();
-        if (Integer.parseInt(userAnswer) == 0) {
-            try (FileOutputStream fOs = new FileOutputStream(new File("search.txt"));
-                 ObjectOutputStream objOs = new ObjectOutputStream(fOs);) {
-                for (Persona p : listPersons) {
-                    if (p.getName().charAt(0) == answer.charAt(0))
-                        objOs.writeObject(p);
+        try {
+            if (Integer.parseInt(userAnswer) == 0) {
+                try (FileOutputStream fOs = new FileOutputStream(new File("search.txt"));
+                     ObjectOutputStream objOs = new ObjectOutputStream(fOs);) {
+                    for (Persona p : listPersons) {
+                        if (p.getName().charAt(0) == answer.charAt(0))
+                            objOs.writeObject(p);
+                    }
                 }
+                System.out.println("Информация сохранена");
             }
+        } catch (NumberFormatException ex) {
+            System.out.println("Вы отказались от сохранения информации");
+
         }
     }
 
