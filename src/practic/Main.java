@@ -116,37 +116,39 @@ public class Main {
                     System.out.println("Сотрудник удален");
                     flag = false;
                 }
-                if (flag == true) {
-                    System.out.println("Не корректные данные, Либо такого сотрудника не существует");
-                }
             }
+        }
+        if (flag == true) {
+            System.out.println("Не корректные данные, либо такого сотрудника не существует");
         }
     }
 
     public static void searchLastName(List<Persona> listPersons) throws IOException {
         boolean flag = true;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Введи имя ");
+        System.out.println("Введи фамилию ");
         String name = reader.readLine();
         for (Persona p : listPersons) {
             if (p.getName().equals(name)) {
                 System.out.println(p);
                 flag = false;
             }
-            if (flag == false) {
-                System.out.println("Не корректные данные, Либо такого сотрудника не существует");
-            }
+        }
+        if (flag == true) {
+            System.out.println("Не корректные данные, либо такого сотрудника не существует");
         }
     }
 
     public static void all(List<Persona> listPersons) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введи данные( возраст либо начальную букву фамилии): ");
+        boolean flag = true;
         String answer = reader.readLine();
         if (Character.isDigit(answer.charAt(0))) {
             for (Persona p : listPersons) {
                 if (p.getAge() == Integer.parseInt(answer)) {
                     System.out.println(p);
+                    flag = false;
                 }
             }
         }
@@ -154,13 +156,17 @@ public class Main {
             for (Persona p : listPersons) {
                 if (p.getName().charAt(0) == answer.charAt(0)) {
                     System.out.println(p);
+                    flag = false;
                 }
             }
         }
-        System.out.println("Сохранить найдену информация в файл? 0-> да /прпустить-->любая клавиша");
-        String userAnswer = reader.readLine();
-        try {
-            if (Integer.parseInt(userAnswer) == 0) {
+        if (flag == true) {
+            System.out.println("Не корректные данные, либо такого сотрудника не существует");
+        }
+        if (flag == false) {
+            System.out.println("Сохранить найдену информация в файл? 0-> да /пропустить-->любая клавиша");
+            String userAnswer = reader.readLine();
+            if (userAnswer.contains("0")) {
                 try (FileOutputStream fOs = new FileOutputStream(new File("search.txt"));
                      ObjectOutputStream objOs = new ObjectOutputStream(fOs);) {
                     for (Persona p : listPersons) {
@@ -169,12 +175,12 @@ public class Main {
                     }
                 }
                 System.out.println("Информация сохранена");
+            }else{
+                System.err.println("Информация не сохранена");
             }
-        } catch (NumberFormatException ex) {
-            System.out.println("Вы отказались от сохранения информации");
-
         }
     }
+
 
     public static void downloadList() {
         try (FileInputStream fIs = new FileInputStream("list.txt");
